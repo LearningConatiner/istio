@@ -1,0 +1,65 @@
+##################################################################################################
+# HELLOWORLD service
+##################################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: helloworld
+  labels:
+    app: helloworld
+spec:
+  ports:
+  - port: 4000
+    name: http
+  selector:
+    app: helloworld
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: helloworld-v1
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: helloworld
+        version: v1
+    spec:
+      containers:
+      - name: helloworld
+        image: prabhavy/helloworld:1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 4000
+---
+###########################################################################
+# Ingress resource (gateway)
+##########################################################################
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: helloworld
+  annotations:
+    kubernetes.io/ingress.class: "istio"
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        backend:
+          serviceName: helloworld
+          servicePort: 4000
+      - path: /prabha
+        backend:
+          serviceName: helloworld
+          servicePort: 4000
+      - path: /prabha1
+        backend:
+          serviceName: helloworld
+          servicePort: 4000
+      - path: /hello
+        backend:
+          serviceName: helloworld
+          servicePort: 4000
+---  
